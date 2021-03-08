@@ -1,0 +1,16 @@
+{
+    "name": "niro/rbac-backend",
+    "description": "Description []: rbac for backend ,database for mongo",
+    "type": "library",
+    "require": {
+        "jenssegers/mongodb": "^3.8",
+        "myclabs/php-enum": "^1.8"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "niro",
+            "email": "Aziv19971111@gmail.com"
+        }
+    ]
+}
