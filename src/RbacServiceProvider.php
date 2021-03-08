@@ -14,7 +14,7 @@ class RbacServiceProvider extends ServiceProvider
     {
         $this->registerRoutes();
         $this->loadMigrationsFrom(__DIR__ . '/../migrations');
-        $this->mergeConfigFrom(__DIR__ . '/../configs/auth.php', 'auth');
+        $this->loadConfigs();
     }
 
     private function registerRoutes()
@@ -32,6 +32,15 @@ class RbacServiceProvider extends ServiceProvider
             'namespace' => "Rbac\Controllers",
             'middleware' => ['web'],
         ];
+    }
+
+    /**
+     * load config
+     */
+    private function loadConfigs()
+    {
+        $this->mergeConfigFrom(__DIR__ . '/../configs/auth.php', 'auth');
+        $this->mergeConfigFrom(__DIR__ . '/../configs/database.php', 'database');
     }
 
     /**
