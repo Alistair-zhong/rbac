@@ -90,7 +90,8 @@ trait ModelTree
      */
     protected function allNodes(): array
     {
-        return $this->allNodesQuery()->get()->toArray();
+        // return $this->allNodesQuery()->get();
+        return (array)$this->allNodesQuery()->get()->toArray();
     }
 
     /**
@@ -223,7 +224,7 @@ trait ModelTree
      */
     public static function DBFind($id)
     {
-        return DB::table((new static)->getTable())->select('id', 'parent_id', 'name', 'code')->whereId($id)->first();
+        return DB::table((new static)->getTable())->select('_id', 'parent_id', 'name', 'code')->whereId($id)->first();
     }
 
     /**
@@ -254,7 +255,7 @@ trait ModelTree
             return;
         }
 
-        $subs = array_merge($subs, $children->pluck('id')->all());
+        $subs = array_merge($subs, $children->pluck('_id')->all());
 
         foreach ($children as $child) {
             static::getAllChild($child->id, $subs);

@@ -2,12 +2,13 @@
 
 namespace Rbac\Models;
 
-use Rbac\Exceptions\VueRouterException;
-use Rbac\Traits\ModelTree;
 use Rbac\Utils\Admin;
-use Illuminate\Database\Eloquent\Builder;
+use Rbac\Casts\ObjectID;
+use Rbac\Traits\ModelTree;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
+use Rbac\Exceptions\VueRouterException;
+use Illuminate\Database\Eloquent\Builder;
 
 class VueRouter extends Model
 {
@@ -15,7 +16,7 @@ class VueRouter extends Model
         ModelTree::allNodesQuery as parentAllNodesQuery;
     }
     protected $casts = [
-        'parent_id' => 'integer',
+        // 'parent_id' => ObjectID::class,
         'order' => 'integer',
         'cache' => 'bool',
         'menu' => 'bool',

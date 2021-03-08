@@ -44,6 +44,7 @@ class VueRouterController extends Controller
 
     public function index(Request $request, VueRouter $vueRouter)
     {
+
         return $this->ok($vueRouter->treeExcept((int) $request->input('except'))->toTree());
     }
 

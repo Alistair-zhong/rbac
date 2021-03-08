@@ -5,6 +5,7 @@ namespace Rbac;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
+use Rbac\Commands\RbacInitCommand;
 
 class RbacServiceProvider extends ServiceProvider
 {
@@ -15,6 +16,12 @@ class RbacServiceProvider extends ServiceProvider
         $this->registerRoutes();
         $this->loadMigrationsFrom(__DIR__ . '/../migrations');
         $this->loadConfigs();
+
+        if ($this->app->runningInConsole()) {
+            $this->commands([
+                RbacInitCommand::class,
+            ]);
+        }
     }
 
     private function registerRoutes()
