@@ -12,5 +12,12 @@
             "name": "niro",
             "email": "Aziv19971111@gmail.com"
         }
-    ]
+    ],
+    "extra": {
+        "laravel":{
+            "providers":[
+                "Rbac\\RbacServiceProvider"
+            ]
+        }
+    }
 }
