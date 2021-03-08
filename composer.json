@@ -3,7 +3,7 @@
     "description": "Description []: rbac for backend ,database for mongo",
     "type": "library",
     "require": {
-        "jenssegers/mongodb": "^3.8",
+        "jenssegers/mongodb": "^3.5",
         "myclabs/php-enum": "^1.8"
     },
     "license": "MIT",
