@@ -13,6 +13,14 @@
             "email": "Aziv19971111@gmail.com"
         }
     ],
+    "autoload": {
+        "psr-4": {
+            "Rbac\\": "src/"
+        },
+        "classmap": [
+            "app/Libs"
+        ]
+    },
     "extra": {
         "laravel":{
             "providers":[
