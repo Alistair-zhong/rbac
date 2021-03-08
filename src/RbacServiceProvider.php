@@ -13,8 +13,8 @@ class RbacServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->registerRoutes();
-        $this->loadMigrationsFrom(__DIR__ . '/migrations');
-        $this->mergeConfigFrom(__DIR__ . '/configs/auth.php', 'auth');
+        $this->loadMigrationsFrom(__DIR__ . '/../migrations');
+        $this->mergeConfigFrom(__DIR__ . '/../configs/auth.php', 'auth');
     }
 
     private function registerRoutes()
