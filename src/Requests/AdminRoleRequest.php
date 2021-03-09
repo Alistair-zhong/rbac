@@ -19,15 +19,25 @@ class AdminRoleRequest extends FormRequest
         $id = $this->route('admin_role');
         $adminRole = new AdminRole;
         $permission = new AdminPermission;
-        $role = $adminRole->find($id);
+
 
         $rules = [
-            'name' => ['required', Rule::unique('admin_roles', 'name')->ignore($role->getKey(), $adminRole->getKeyName())],
-            'slug' => ['required', Rule::unique('admin_roles', 'slug')->ignore($role->getKey(), $adminRole->getKeyName())],
+            'name' => ['required', Rule::unique('admin_roles', 'name')],
+            'slug' => ['required', Rule::unique('admin_roles', 'slug')],
             'permissions' => 'array',
             'permissions.*' => 'exists:admin_permissions,' . $permission->getKeyName(),
         ];
+
         if ($this->isMethod('put')) {
+            $role = $adminRole->findOrFail($id);
+            $rules = array_merge(
+                $rules,
+                $rules = [
+                    'name' => ['required', Rule::unique('admin_roles', 'name')->ignore($role->getKey(), $adminRole->getKeyName())],
+                    'slug' => ['required', Rule::unique('admin_roles', 'slug')->ignore($role->getKey(), $adminRole->getKeyName())],
+                ]
+            );
+
             $rules = Arr::only($rules, $this->keys());
         }
         return $rules;

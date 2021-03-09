@@ -12,11 +12,10 @@ class AdminPermissionRequest extends FormRequest
     public function rules()
     {
         $id = $this->route('admin_permission');
-        $permission = AdminPermission::findOrFail($id);
 
         $rules = [
-            'name' => ['required', Rule::unique('admin_permissions', 'name')->ignore($permission->getKey(), $permission->getKeyName())],
-            'slug' => ['required', Rule::unique('admin_permissions', 'slug')->ignore($permission->getKey(), $permission->getKeyName())],
+            'name' => ['required', Rule::unique('admin_permissions', 'name')],
+            'slug' => ['required', Rule::unique('admin_permissions', 'slug')],
             'http_method' => 'nullable|array',
             'http_method.*' => Rule::in(AdminPermission::$httpMethods),
             'http_path' => [
@@ -24,7 +23,17 @@ class AdminPermissionRequest extends FormRequest
                 new AdminPermissionHttpPath(),
             ],
         ];
-        if ($this->isMethod('put')) {
+
+        if ($this->isMethod('put') || $this->isMethod('patch')) {
+            $permission = AdminPermission::findOrFail($id);
+            $rules = array_merge(
+                $rules,
+                [
+                    'name' => ['required', Rule::unique('admin_permissions', 'name')->ignore($permission->getKey(), $permission->getKeyName())],
+                    'slug' => ['required', Rule::unique('admin_permissions', 'slug')->ignore($permission->getKey(), $permission->getKeyName())],
+                ]
+            );
+
             $rules = Arr::only($rules, $this->keys());
         }
 
