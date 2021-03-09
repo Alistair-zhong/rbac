@@ -2,6 +2,16 @@
 
 此工具包开箱即用，集成了接口级别的权限控制模块，自带模型、数据表、中间件，只需要配置数据库账户密码即可使用。
 
+
+### 前提
+
+* 需要名为 `login` 的路由，例如
+
+```php
+Route::post('auth/login', [C\Auth\LoginController::class, 'login'])->name('login');
+```
+
+
 ### 使用说明
 
 * 检查是否在 `env` 中配置了 `mongodb` 数据库账密
@@ -32,5 +42,7 @@
 * 执行 `php artisan migrate` 
 
 * 执行 `php artisan rbac:init`
+
+* 恭喜你，完成了初始化
 
 
