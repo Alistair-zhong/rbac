@@ -33,7 +33,7 @@ trait ModelTree
 
     protected function idColumn()
     {
-        return '_id';
+        return $this->getKeyName();
     }
 
     /**
@@ -41,7 +41,7 @@ trait ModelTree
      *
      * @return $this
      */
-    public function treeExcept(int $id)
+    public function treeExcept($id)
     {
         $this->except = $id;
 

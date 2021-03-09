@@ -22,11 +22,8 @@ class AdminRole extends Model
         return parent::delete();
     }
 
-    /**
-     * 通过角色id 判断是不是期望的 slug
-     */
-    public static function isReviewer(int $role_id)
+    public function getRouteKeyName()
     {
-        return static::query()->where('id', $role_id)->value('slug') === 'reviewer';
+        return $this->getKeyName();
     }
 }

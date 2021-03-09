@@ -23,37 +23,42 @@ class AdminRoleController extends Controller
         return $this->created(AdminRoleResource::make($role));
     }
 
-    public function edit(AdminRole $adminRole)
+    public function edit($adminRole)
     {
         return $this->ok(
-            AdminRoleResource::make($adminRole)
+            AdminRoleResource::make(AdminRole::find($adminRole))
                 ->for(AdminRoleResource::FOR_EDIT)
                 ->additional($this->formData())
         );
     }
 
-    public function update(AdminRoleRequest $request, AdminRole $adminRole)
+    public function update(AdminRoleRequest $request, $adminRole)
     {
         $inputs = $request->validated();
+        $adminRole = AdminRole::findOrFail($adminRole);
         $adminRole->update($inputs);
+
         if (isset($inputs['permissions'])) {
             $adminRole->permissions()->sync($inputs['permissions']);
         }
         return $this->created(AdminRoleResource::make($adminRole));
     }
 
-    public function destroy(AdminRole $adminRole)
+    public function destroy($adminRole)
     {
-        $adminRole->delete();
+        AdminRole::find($adminRole)->delete();
+
         return $this->noContent();
     }
 
     public function index(Request $request, AdminRoleFilter $filter)
     {
-        $roles = AdminRole::query()
+        $model = new AdminRole;
+        $roles = $model->query()
             ->with(['permissions'])
             ->filter($filter)
-            ->orderByDesc('id');
+            ->orderByDesc($model->getKeyName());
+
         $roles = $request->get('all') ? $roles->get() : $roles->paginate();
 
         return $this->ok(AdminRoleResource::forCollection(AdminRoleResource::FOR_INDEX, $roles));
@@ -66,9 +71,10 @@ class AdminRoleController extends Controller
      */
     protected function formData()
     {
-        $permissions = AdminPermission::query()
-            ->select(['id', 'name'])
-            ->orderByDesc('id')
+        $model = new AdminPermission;
+        $permissions = $model->query()
+            ->select([$model->getKeyName(), 'name'])
+            ->orderByDesc($model->getKeyName())
             ->get();
 
         return compact('permissions');

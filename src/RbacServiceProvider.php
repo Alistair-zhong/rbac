@@ -9,10 +9,24 @@ use Rbac\Commands\RbacInitCommand;
 
 class RbacServiceProvider extends ServiceProvider
 {
+    protected $middlewareMap = [
+        'rbac.permission' => Middleware\AdminPermission::class,
+        'rbac.auth' => Middleware\Authenticate::class,
+    ];
 
+    protected $middlewareGroups = [
+        'rbac' => [
+            Middleware\ForceJson::class,
+            \App\Http\Middleware\EncryptCookies::class,
+            \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
+            \Illuminate\Session\Middleware\StartSession::class,
+            \Illuminate\Routing\Middleware\SubstituteBindings::class,
+        ],
+    ];
 
     public function boot()
     {
+        $this->loadMiddlewares();
         $this->registerRoutes();
         $this->loadMigrationsFrom(__DIR__ . '/../migrations');
         $this->loadConfigs();
@@ -21,6 +35,16 @@ class RbacServiceProvider extends ServiceProvider
             $this->commands([
                 RbacInitCommand::class,
             ]);
+        }
+    }
+
+    private function loadMiddlewares()
+    {
+        foreach ($this->middlewareMap as $key => $middleware) {
+            app('router')->aliasMiddleware($key, $middleware);
+        }
+        foreach ($this->middlewareGroups as $key => $middleware) {
+            app('router')->middlewareGroup($key, $middleware);
         }
     }
 
@@ -37,7 +61,7 @@ class RbacServiceProvider extends ServiceProvider
             'prefix' => 'admin-api',
             'as' => 'admin-api.',
             'namespace' => "Rbac\Controllers",
-            'middleware' => ['web'],
+            'middleware' => ['rbac'],
         ];
     }
 

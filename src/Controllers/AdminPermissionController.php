@@ -13,35 +13,41 @@ class AdminPermissionController extends Controller
     public function store(AdminPermissionRequest $request, AdminPermission $model)
     {
         $inputs = $request->validated();
+
         $res = $model->create($inputs);
         return $this->created(AdminPermissionResource::make($res));
     }
 
     public function index(Request $request, AdminPermissionFilter $filter)
     {
-        $perms = AdminPermission::query()
+        $model = new AdminPermission;
+        $perms = $model->query()
             ->filter($filter)
-            ->orderByDesc('id');
+            ->orderByDesc($model->getKeyName());
         $perms = $request->get('all') ? $perms->get() : $perms->paginate();
 
         return $this->ok(AdminPermissionResource::collection($perms));
     }
 
-    public function edit(AdminPermission $adminPermission)
+    public function edit($adminPermission)
     {
-        return $this->ok(AdminPermissionResource::make($adminPermission));
+        return $this->ok(AdminPermissionResource::make(AdminPermission::findOrFail($adminPermission)));
     }
 
-    public function update(AdminPermissionRequest $request, AdminPermission $adminPermission)
+    public function update(AdminPermissionRequest $request, $adminPermission)
     {
         $inputs = $request->validated();
+        $adminPermission = AdminPermission::findOrFail($adminPermission);
         $adminPermission->update($inputs);
+
         return $this->created(AdminPermissionResource::make($adminPermission));
     }
 
-    public function destroy(AdminPermission $adminPermission)
+    public function destroy($adminPermission)
     {
+        $adminPermission = AdminPermission::findOrFail($adminPermission);
         $adminPermission->delete();
+
         return $this->noContent();
     }
 }

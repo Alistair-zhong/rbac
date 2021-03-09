@@ -33,6 +33,22 @@ class VueRouter extends Model
     ];
     protected $treeWithAuth = false;
 
+    public function getRouteKeyName()
+    {
+        return $this->getKeyName();
+    }
+
+    public static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($model) {
+            if (is_null($model->parent_id)) {
+                $model->parent_id = 0;
+            }
+        });
+    }
+
     /**
      * parent_id 默认为 0 处理
      *

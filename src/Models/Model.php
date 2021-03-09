@@ -13,12 +13,17 @@ class Model extends \Jenssegers\Mongodb\Eloquent\Model
 
     protected $primaryKey = '_id';
 
-    public $incrementing = false;
+    // public $incrementing = false;
 
     protected $dates = ['created_at', 'updated_at'];
 
     protected function serializeDate(DateTimeInterface $date)
     {
         return $date->format('Y-m-d H:i:s');
+    }
+
+    public function getRouteKeyName()
+    {
+        return $this->getKeyName();
     }
 }

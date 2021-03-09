@@ -15,6 +15,7 @@ class VueRouterController extends Controller
     public function store(VueRouterRequest $request, VueRouter $vueRouter)
     {
         $inputs = $request->validated();
+
         $vueRouter = $vueRouter->create($inputs);
         if (!empty($q = $request->post('roles', []))) {
             $vueRouter->roles()->attach($q);
@@ -22,10 +23,12 @@ class VueRouterController extends Controller
         return $this->created(VueRouterResource::make($vueRouter));
     }
 
-    public function update(VueRouterRequest $request, VueRouter $vueRouter)
+    public function update(VueRouterRequest $request, $vueRouter)
     {
         $inputs = $request->validated();
+        $vueRouter = VueRouter::findOrFail($vueRouter);
         $vueRouter->update($inputs);
+
         if (isset($inputs['roles'])) {
             $vueRouter->roles()->sync($inputs['roles']);
         }
@@ -33,12 +36,14 @@ class VueRouterController extends Controller
         return $this->created(VueRouterResource::make($vueRouter));
     }
 
-    public function edit(VueRouter $vueRouter)
+    public function edit($vueRouter)
     {
+        $vueRouter = VueRouter::findOrFail($vueRouter);
+
         return $this->ok(
             VueRouterResource::make($vueRouter)
                 ->for(VueRouterResource::FOR_EDIT)
-                ->additional($this->formData($vueRouter->id))
+                ->additional($this->formData($vueRouter->getKey()))
         );
     }
 
@@ -48,8 +53,10 @@ class VueRouterController extends Controller
         return $this->ok($vueRouter->treeExcept((int) $request->input('except'))->toTree());
     }
 
-    public function destroy(VueRouter $vueRouter)
+    public function destroy($vueRouter)
     {
+        $vueRouter = VueRouter::findOrFail($vueRouter);
+
         $vueRouter->delete();
         return $this->noContent();
     }
@@ -71,15 +78,17 @@ class VueRouterController extends Controller
     protected function formData($exceptRouterId = null)
     {
         $model = app(VueRouter::class);
+        $role_model = new AdminRole;
+        $permission = new AdminPermission;
 
         $vueRouters = $model->treeExcept($exceptRouterId ?? 0)->toTree();
 
-        $roles = AdminRole::query()
-            ->orderByDesc('id')
+        $roles = $role_model->query()
+            ->orderByDesc($role_model->getKeyName())
             ->get();
 
-        $permissions = AdminPermission::query()
-            ->orderByDesc('id')
+        $permissions = $permission->query()
+            ->orderByDesc($permission->getKeyName())
             ->get();
 
         return [

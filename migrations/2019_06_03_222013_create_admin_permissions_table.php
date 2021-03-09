@@ -14,7 +14,7 @@ class CreateAdminPermissionsTable extends Migration
     public function up()
     {
         Schema::create('admin_permissions', function (Blueprint $table) {
-            $table->increments('id');
+            // $table->increments('id');
             $table->string('name', 50)->default('')->comment('名称');
             $table->string('slug', 50)->default('')->comment('标识');
             $table->string('http_method')->nullable()->default('')->comment('请求方法');

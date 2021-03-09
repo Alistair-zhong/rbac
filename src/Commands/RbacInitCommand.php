@@ -154,6 +154,7 @@ class RbacInitCommand extends Command
         ]);
 
         $user->roles()->create([
+            // 'id' => new \MongoDB\BSON\UTCDateTime(new \DateTime('now')),
             'name' => '超级管理员',
             'slug' => 'administrator',
         ]);
@@ -161,6 +162,7 @@ class RbacInitCommand extends Command
         AdminRole::first()
             ->permissions()
             ->create([
+                // 'id' => new \MongoDB\BSON\UTCDateTime(new \DateTime('now')),
                 'name' => '所有权限',
                 'slug' => 'pass-all',
                 'http_path' => '*',

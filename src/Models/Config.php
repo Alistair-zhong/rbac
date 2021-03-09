@@ -11,8 +11,6 @@ use Throwable;
 class Config extends Model
 {
 
-    protected $primaryKey = '_id';
-
     const TYPE_INPUT = 'input';
     const TYPE_TEXTAREA = 'textarea';
     const TYPE_FILE = 'file';
@@ -99,7 +97,7 @@ class Config extends Model
         // 避免刚安装系统时，还没有数据库的情况
         try {
             $groups = ConfigCategory::query()
-                ->select(['id', 'slug'])
+                ->select([(new self)->getKeyName(), 'slug'])
                 ->with('configs:category_id,slug,value')
                 ->get()
                 ->map(function (ConfigCategory $category) {
