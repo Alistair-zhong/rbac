@@ -46,7 +46,10 @@ class AdminRoleController extends Controller
 
     public function destroy($adminRole)
     {
-        AdminRole::find($adminRole)->delete();
+        $adminRole = AdminRole::find($adminRole);
+        if ($adminRole) {
+            $adminRole->delete();
+        }
 
         return $this->noContent();
     }

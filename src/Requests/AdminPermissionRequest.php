@@ -11,10 +11,12 @@ class AdminPermissionRequest extends FormRequest
 {
     public function rules()
     {
-        $id = (int) optional($this->route('admin_permission'))->id;
+        $id = $this->route('admin_permission');
+        $permission = AdminPermission::findOrFail($id);
+
         $rules = [
-            'name' => 'required|unique:admin_permissions,name,' . $id,
-            'slug' => 'required|unique:admin_permissions,slug,' . $id,
+            'name' => ['required', Rule::unique('admin_permissions', 'name')->ignore($permission->getKey(), $permission->getKeyName())],
+            'slug' => ['required', Rule::unique('admin_permissions', 'slug')->ignore($permission->getKey(), $permission->getKeyName())],
             'http_method' => 'nullable|array',
             'http_method.*' => Rule::in(AdminPermission::$httpMethods),
             'http_path' => [

@@ -2,7 +2,10 @@
 
 namespace Rbac\Requests;
 
+use Rbac\Models\AdminRole;
 use Illuminate\Support\Arr;
+use Illuminate\Validation\Rule;
+use Rbac\Models\AdminPermission;
 
 class AdminRoleRequest extends FormRequest
 {
@@ -13,12 +16,16 @@ class AdminRoleRequest extends FormRequest
      */
     public function rules()
     {
-        $id = (int) optional($this->route('admin_role'))->id;
+        $id = $this->route('admin_role');
+        $adminRole = new AdminRole;
+        $permission = new AdminPermission;
+        $role = $adminRole->find($id);
+
         $rules = [
-            'name' => 'required|unique:admin_roles,name,' . $id,
-            'slug' => 'required|unique:admin_roles,slug,' . $id,
+            'name' => ['required', Rule::unique('admin_roles', 'name')->ignore($role->getKey(), $adminRole->getKeyName())],
+            'slug' => ['required', Rule::unique('admin_roles', 'slug')->ignore($role->getKey(), $adminRole->getKeyName())],
             'permissions' => 'array',
-            'permissions.*' => 'exists:admin_permissions,id',
+            'permissions.*' => 'exists:admin_permissions,' . $permission->getKeyName(),
         ];
         if ($this->isMethod('put')) {
             $rules = Arr::only($rules, $this->keys());
