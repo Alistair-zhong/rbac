@@ -3,6 +3,10 @@
 此工具包开箱即用，集成了接口级别的权限控制模块，自带模型、数据表、中间件，只需要配置数据库账户密码即可使用。
 
 
+### 安装
+
+    COMPOSER_MEMORY_LIMIT=-1 composer require niro/rbac-backend
+
 ### 前提
 
 * `php` 需要开启 `mongodb` 扩展
