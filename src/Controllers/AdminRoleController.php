@@ -64,7 +64,7 @@ class AdminRoleController extends Controller
 
         $roles = $request->get('all') ? $roles->get() : $roles->paginate();
 
-        return $this->ok(AdminRoleResource::forCollection(AdminRoleResource::FOR_INDEX, $roles));
+        return $this->ok(AdminRoleResource::forCollection(AdminRoleResource::FOR_INDEX, $roles->items())->additional(['total' => $roles->total()]));
     }
 
     /**

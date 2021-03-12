@@ -62,8 +62,8 @@ class RbacServiceProvider extends ServiceProvider
             'as' => 'admin-api.',
             'namespace' => "Rbac\Controllers",
             'middleware' => [
-                'rbac.auth',
-                'rbac.permission',
+                // 'rbac.auth',
+                // 'rbac.permission',
             ],
         ];
     }

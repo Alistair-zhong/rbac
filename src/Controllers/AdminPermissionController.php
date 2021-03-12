@@ -26,7 +26,7 @@ class AdminPermissionController extends Controller
             ->orderByDesc($model->getKeyName());
         $perms = $request->get('all') ? $perms->get() : $perms->paginate();
 
-        return $this->ok(AdminPermissionResource::collection($perms));
+        return $this->ok(AdminPermissionResource::collection($perms->items())->additional(['total' => $perms->total()]));
     }
 
     public function edit($adminPermission)
