@@ -17,8 +17,9 @@ class AdminUserRequest extends FormRequest
     {
         $user = $this->userResource();
         $id = (int) optional($user)->id;
+        // Rule::unique('admin_users', 'username')
         $rules = [
-            'username' => 'required|max:100|unique:admin_users,username,' . $id,
+            'username' => ['required', 'max:100', 'unique:admin_users,username,' . $id],
             'name' => 'required|max:100',
             'avatar' => 'nullable|string|max:255',
             'password' => 'required|between:6,20|confirmed',

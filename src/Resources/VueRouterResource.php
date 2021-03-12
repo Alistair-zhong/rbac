@@ -12,7 +12,7 @@ class VueRouterResource extends JsonResource
     public function toArray($request)
     {
         return [
-            'id' => $this->id,
+            $this->getKeyName() => $this->getKey(),
             'parent_id' => $this->parent_id,
             'title' => $this->title,
             'icon' => $this->icon,
@@ -22,7 +22,7 @@ class VueRouterResource extends JsonResource
             'menu' => $this->menu,
             $this->mergeFor(static::FOR_EDIT, function () {
                 return [
-                    'roles' => $this->roles()->pluck('id'),
+                    'roles' => $this->roles()->pluck($this->getKeyName()),
                 ];
             }),
             'permission' => $this->permission,

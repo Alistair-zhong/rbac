@@ -6,6 +6,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use Rbac\Commands\RbacInitCommand;
+use Illuminate\Http\JsonResponse;
 
 class RbacServiceProvider extends ServiceProvider
 {
@@ -30,6 +31,7 @@ class RbacServiceProvider extends ServiceProvider
         $this->registerRoutes();
         $this->loadMigrationsFrom(__DIR__ . '/../migrations');
         $this->loadConfigs();
+        $this->extend();
 
         if ($this->app->runningInConsole()) {
             $this->commands([
@@ -119,5 +121,30 @@ class RbacServiceProvider extends ServiceProvider
         }
 
         return $array;
+    }
+
+    protected function extend()
+    {
+        JsonResponse::macro('wrap', function () {
+            $original = [];
+            if (isset($this->original['data'])) {
+                $original['items'] = $this->original['data'];
+                unset($this->original['data']);
+                $original = array_merge($original, array_filter((array)$this->original));
+            } else if ($this->original instanceof \ArrayObject) {
+            } else {
+                $original = is_array($this->original) ? $this->original : $this->original->resolve() ?? null;
+            }
+
+            $data = [
+                'code'    => 0,
+                'result'  => $original,
+                'message' => 'ok',
+                'type'    => 'success'
+            ];
+            $this->setData($data);
+
+            return $this;
+        });
     }
 }

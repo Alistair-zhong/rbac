@@ -20,7 +20,7 @@ class VueRouterController extends Controller
         if (!empty($q = $request->post('roles', []))) {
             $vueRouter->roles()->attach($q);
         }
-        return $this->created(VueRouterResource::make($vueRouter));
+        return $this->created(VueRouterResource::make($vueRouter))->wrap();
     }
 
     public function update(VueRouterRequest $request, $vueRouter)
@@ -33,7 +33,7 @@ class VueRouterController extends Controller
             $vueRouter->roles()->sync($inputs['roles']);
         }
 
-        return $this->created(VueRouterResource::make($vueRouter));
+        return $this->created(VueRouterResource::make($vueRouter))->wrap();
     }
 
     public function edit($vueRouter)
@@ -44,13 +44,13 @@ class VueRouterController extends Controller
             VueRouterResource::make($vueRouter)
                 ->for(VueRouterResource::FOR_EDIT)
                 ->additional($this->formData($vueRouter->getKey()))
-        );
+        )->wrap();
     }
 
     public function index(Request $request, VueRouter $vueRouter)
     {
 
-        return $this->ok($vueRouter->treeExcept((int) $request->input('except'))->toTree());
+        return $this->ok($vueRouter->treeExcept((int) $request->input('except'))->toTree())->wrap();
     }
 
     public function destroy($vueRouter)
@@ -58,14 +58,14 @@ class VueRouterController extends Controller
         $vueRouter = VueRouter::findOrFail($vueRouter);
 
         $vueRouter->delete();
-        return $this->noContent();
+        return $this->ok()->wrap();
     }
 
     public function batchUpdate(Request $request, VueRouter $vueRouter)
     {
         $vueRouter->saveOrder($request->input('_order', []));
 
-        return $this->created();
+        return $this->created()->wrap();
     }
 
     /**
@@ -100,7 +100,7 @@ class VueRouterController extends Controller
 
     public function create()
     {
-        return $this->ok($this->formData());
+        return $this->ok($this->formData())->wrap();
     }
 
     public function importVueRouters(VueRouterRequest $request, VueRouter $vueRouter)
@@ -109,9 +109,9 @@ class VueRouterController extends Controller
 
         try {
             $vueRouters = $vueRouter->replaceFromFile($file);
-            return $this->created($vueRouters);
+            return $this->created($vueRouters)->wrap();
         } catch (VueRouterException $e) {
-            return $this->error($e->getMessage());
+            return $this->error($e->getMessage())->wrap();
         }
     }
 }

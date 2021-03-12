@@ -89,7 +89,7 @@ class AdminUserController extends Controller
     public function destroy(AdminUser $adminUser)
     {
         $adminUser->delete();
-        return $this->noContent();
+        return $this->ok()->wrap();
     }
 
     public function edit(Request $request, AdminUser $adminUser)

@@ -26,7 +26,7 @@ class AdminUserResource extends JsonResource
     public function toArray($request)
     {
         return [
-            'id'       => $this->id,
+            $this->getKeyName()      => $this->getKey(),
             'username' => $this->username,
             'name'     => $this->name,
             'avatar'   => $this->avatar,

@@ -15,7 +15,7 @@ class AdminPermissionController extends Controller
         $inputs = $request->validated();
 
         $res = $model->create($inputs);
-        return $this->created(AdminPermissionResource::make($res));
+        return $this->created(AdminPermissionResource::make($res))->wrap();
     }
 
     public function index(Request $request, AdminPermissionFilter $filter)
@@ -26,7 +26,7 @@ class AdminPermissionController extends Controller
             ->orderByDesc($model->getKeyName());
         $perms = $request->get('all') ? $perms->get() : $perms->paginate();
 
-        return $this->ok(AdminPermissionResource::collection($perms->items())->additional(['total' => $perms->total()]));
+        return $this->ok(AdminPermissionResource::collection($perms->items())->additional(['total' => $perms->total()]))->wrap();
     }
 
     public function edit($adminPermission)
@@ -40,7 +40,7 @@ class AdminPermissionController extends Controller
         $adminPermission = AdminPermission::findOrFail($adminPermission);
         $adminPermission->update($inputs);
 
-        return $this->created(AdminPermissionResource::make($adminPermission));
+        return $this->created(AdminPermissionResource::make($adminPermission))->wrap();
     }
 
     public function destroy($adminPermission)
@@ -48,6 +48,6 @@ class AdminPermissionController extends Controller
         $adminPermission = AdminPermission::findOrFail($adminPermission);
         $adminPermission->delete();
 
-        return $this->noContent();
+        return $this->ok()->wrap();;
     }
 }

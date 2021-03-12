@@ -20,7 +20,7 @@ class AdminRoleController extends Controller
             $role->permissions()->attach($perms);
         }
 
-        return $this->created(AdminRoleResource::make($role));
+        return $this->created(AdminRoleResource::make($role))->wrap();
     }
 
     public function edit($adminRole)
@@ -29,7 +29,7 @@ class AdminRoleController extends Controller
             AdminRoleResource::make(AdminRole::find($adminRole))
                 ->for(AdminRoleResource::FOR_EDIT)
                 ->additional($this->formData())
-        );
+        )->wrap();
     }
 
     public function update(AdminRoleRequest $request, $adminRole)
@@ -41,7 +41,7 @@ class AdminRoleController extends Controller
         if (isset($inputs['permissions'])) {
             $adminRole->permissions()->sync($inputs['permissions']);
         }
-        return $this->created(AdminRoleResource::make($adminRole));
+        return $this->created(AdminRoleResource::make($adminRole))->wrap();
     }
 
     public function destroy($adminRole)
@@ -51,7 +51,7 @@ class AdminRoleController extends Controller
             $adminRole->delete();
         }
 
-        return $this->noContent();
+        return $this->ok()->wrap();
     }
 
     public function index(Request $request, AdminRoleFilter $filter)
@@ -64,7 +64,7 @@ class AdminRoleController extends Controller
 
         $roles = $request->get('all') ? $roles->get() : $roles->paginate();
 
-        return $this->ok(AdminRoleResource::forCollection(AdminRoleResource::FOR_INDEX, $roles->items())->additional(['total' => $roles->total()]));
+        return $this->ok(AdminRoleResource::forCollection(AdminRoleResource::FOR_INDEX, $roles->items())->additional(['total' => $roles->total()]))->wrap();
     }
 
     /**
@@ -85,6 +85,6 @@ class AdminRoleController extends Controller
 
     public function create()
     {
-        return $this->ok($this->formData());
+        return $this->ok($this->formData())->wrap();
     }
 }

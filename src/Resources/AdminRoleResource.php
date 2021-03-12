@@ -13,7 +13,7 @@ class AdminRoleResource extends JsonResource
     public function toArray($request)
     {
         return [
-            'id' => $this->id,
+            $this->getKeyName() => $this->getKey(),
             'name' => $this->name,
             'slug' => $this->slug,
             $this->mergeFor(static::FOR_INDEX, function () {
@@ -23,7 +23,7 @@ class AdminRoleResource extends JsonResource
             }),
             $this->mergeFor(static::FOR_EDIT, function () {
                 return [
-                    'permissions' => $this->permissions()->select(['id', 'name'])->get(),
+                    'permissions' => $this->permissions()->select([$this->getKeyName(), 'name'])->get(),
                 ];
             }),
             'created_at' => (string) $this->created_at,

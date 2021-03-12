@@ -10,7 +10,7 @@ class AdminPermissionResource extends JsonResource
     public function toArray($request)
     {
         return [
-            'id' => $this->id,
+            $this->getKeyName() => $this->getKey(),
             'name' => $this->name,
             'slug' => $this->slug,
             'http_method' => $this->http_method,
