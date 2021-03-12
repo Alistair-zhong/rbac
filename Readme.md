@@ -5,7 +5,7 @@
 
 ### 安装
 
-    COMPOSER_MEMORY_LIMIT=-1 composer require niro/rbac-backend
+    COMPOSER_MEMORY_LIMIT=-1 composer require --no-cache niro/rbac-backend
 
 ### 前提
 

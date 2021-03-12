@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 
+Route::resource('admin-users', AdminUserController::class);
 
 Route::resource('vue-routers', VueRouterController::class)->except(['show']);
 
