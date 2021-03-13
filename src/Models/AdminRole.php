@@ -16,6 +16,16 @@ class AdminRole extends Model
         );
     }
 
+    public function routers()
+    {
+        return $this->belongsToMany(
+            VueRouter::class,
+            'vue_router_role',
+            'role_id',
+            'vue_router_id'
+        );
+    }
+
     public function delete()
     {
         $this->permissions()->detach();

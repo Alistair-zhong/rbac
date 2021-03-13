@@ -16,9 +16,10 @@ class AdminRoleResource extends JsonResource
             $this->getKeyName() => $this->getKey(),
             'name' => $this->name,
             'slug' => $this->slug,
+            'routerPermissions' => $this->routers()->pluck($this->getKeyName()),
             $this->mergeFor(static::FOR_INDEX, function () {
                 return [
-                    'permissions' => $this->permissions->pluck('name'),
+                    'permissions' => $this->permissions()->select([$this->getKeyName(), 'name'])->get(),
                 ];
             }),
             $this->mergeFor(static::FOR_EDIT, function () {

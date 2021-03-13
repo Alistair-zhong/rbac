@@ -31,7 +31,7 @@ class AdminPermissionController extends Controller
 
     public function edit($adminPermission)
     {
-        return $this->ok(AdminPermissionResource::make(AdminPermission::findOrFail($adminPermission)));
+        return $this->ok(AdminPermissionResource::make(AdminPermission::findOrFail($adminPermission)))->wrap();
     }
 
     public function update(AdminPermissionRequest $request, $adminPermission)
