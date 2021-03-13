@@ -127,13 +127,14 @@ class RbacServiceProvider extends ServiceProvider
     {
         JsonResponse::macro('wrap', function () {
             $original = [];
+
             if (isset($this->original['data'])) {
                 $original['items'] = $this->original['data'];
                 unset($this->original['data']);
                 $original = array_merge($original, array_filter((array)$this->original));
             } else if ($this->original instanceof \ArrayObject) {
             } else {
-                $original = is_array($this->original) ? $this->original : $this->original->resolve() ?? null;
+                $original = $this->original instanceof \Arrayable ? (array)$this->original : $this->original->resolve() ?? null;
             }
 
             $data = [
