@@ -87,4 +87,28 @@ class AdminRoleController extends Controller
     {
         return $this->ok($this->formData())->wrap();
     }
+
+    /**
+     * 批量更新角色 权限 路由方法
+     */
+    public function bulkUpdate(Request $request)
+    {
+        $query = new AdminRole;
+        try {
+            foreach ($request->all() as $item) {
+
+                $role = $query->where('slug', $item['slug'])->first();
+                $role->permissions()->sync(array_column($item['permissions'], $query->getKeyName()));
+                $role->routers()->sync($item['routerPermissions']);
+                // $query->where('slug', $item['slug'])->update([
+                //     'permissions' => array_column($item['permissions'], $query->getKeyName()),
+                //     'routerPermissions' => $item['routerPermissions']
+                // ]);
+            }
+
+            return $this->ok()->wrap();
+        } catch (\Throwable $th) {
+            return $this->error('更新失败' . $th->getMessage())->wrap();
+        }
+    }
 }

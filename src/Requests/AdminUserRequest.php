@@ -24,9 +24,9 @@ class AdminUserRequest extends FormRequest
             'avatar' => 'nullable|string|max:255',
             'password' => 'required|between:6,20|confirmed',
             'roles' => 'array',
-            'roles.*' => 'exists:admin_roles,id',
+            'roles.*' => 'exists:admin_roles,_id',
             'permissions' => 'array',
-            'permissions.*' => 'exists:admin_permissions,id',
+            'permissions.*' => 'exists:admin_permissions,_id',
         ];
         if ($this->isMethod('put')) {
             $rules = Arr::only($rules, $this->keys());

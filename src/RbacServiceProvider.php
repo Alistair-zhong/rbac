@@ -133,8 +133,11 @@ class RbacServiceProvider extends ServiceProvider
                 unset($this->original['data']);
                 $original = array_merge($original, array_filter((array)$this->original));
             } else if ($this->original instanceof \ArrayObject) {
+                // 解决空的情况
+            } elseif (is_array($this->original)) {
+                $original = (array)$this->original;
             } else {
-                $original = (is_array($this->original) || $this->original instanceof \Arrayable) ? (array)$this->original : $this->original->resolve() ?? null;
+                $original = $this->original instanceof \Illuminate\Database\Eloquent\Model ? $this->original->toArray() : $this->original->resolve() ?? null;
             }
 
             $data = [

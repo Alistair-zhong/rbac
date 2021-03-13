@@ -22,9 +22,9 @@ class VueRouterRequest extends FormRequest
             'cache' => 'boolean',
             'menu' => 'boolean',
             'roles' => 'array',
-            'roles.*' => 'exists:admin_roles,id',
+            'roles.*' => 'exists:admin_roles,_id',
             'permission' => 'nullable|exists:admin_permissions,slug',
-            'parent_id' => 'exists:vue_routers,id',
+            'parent_id' => 'exists:vue_routers,_id',
         ];
 
         if ($this->isMethod('put')) {

@@ -4,7 +4,7 @@ namespace Rbac\Models;
 
 class AdminRole extends Model
 {
-    protected $fillable = ['name', 'slug'];
+    protected $fillable = ['name', 'slug', 'permissions', 'routerPermissions'];
 
     public function permissions()
     {
