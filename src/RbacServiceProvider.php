@@ -134,7 +134,7 @@ class RbacServiceProvider extends ServiceProvider
                 $original = array_merge($original, array_filter((array)$this->original));
             } else if ($this->original instanceof \ArrayObject) {
             } else {
-                $original = $this->original instanceof \Arrayable ? (array)$this->original : $this->original->resolve() ?? null;
+                $original = (is_array($this->original) || $this->original instanceof \Arrayable) ? (array)$this->original : $this->original->resolve() ?? null;
             }
 
             $data = [
