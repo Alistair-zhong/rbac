@@ -3,7 +3,6 @@
 namespace Rbac\Models;
 
 use Rbac\Utils\Admin;
-use Rbac\Casts\ObjectID;
 use Rbac\Traits\ModelTree;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
@@ -29,7 +28,7 @@ class VueRouter extends Model
         'path',
         'cache',
         'menu',
-        'permission',
+        'role_ids',
     ];
     protected $treeWithAuth = false;
 
@@ -63,9 +62,9 @@ class VueRouter extends Model
     {
         return $this->belongsToMany(
             AdminRole::class,
-            'vue_router_role',
-            'vue_router_id',
-            'role_id'
+            null,
+            'vue_router_ids',
+            'role_ids'
         );
     }
 

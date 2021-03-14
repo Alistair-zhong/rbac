@@ -4,7 +4,7 @@ namespace Rbac\Models;
 
 class AdminPermission extends Model
 {
-    protected $fillable = ['name', 'slug', 'http_method', 'http_path'];
+    protected $fillable = ['name', 'slug', 'http_method', 'http_path', 'role_ids'];
     public static $httpMethods = [
         'GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS', 'HEAD',
     ];
@@ -41,9 +41,9 @@ class AdminPermission extends Model
     {
         return $this->belongsToMany(
             AdminRole::class,
-            'admin_role_permission',
-            'role_id',
-            'permission_id'
+            null,
+            'permission_ids',
+            'role_ids'
         );
     }
 }

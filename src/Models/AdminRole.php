@@ -4,15 +4,15 @@ namespace Rbac\Models;
 
 class AdminRole extends Model
 {
-    protected $fillable = ['name', 'slug', 'permissions', 'routerPermissions'];
+    protected $fillable = ['name', 'slug', 'user_ids', 'vue_router_ids', 'permission_ids'];
 
     public function permissions()
     {
         return $this->belongsToMany(
             AdminPermission::class,
-            'admin_role_permission',
-            'role_id',
-            'permission_id'
+            null,
+            'role_ids',
+            'permission_ids'
         );
     }
 
@@ -20,9 +20,9 @@ class AdminRole extends Model
     {
         return $this->belongsToMany(
             VueRouter::class,
-            'vue_router_role',
-            'role_id',
-            'vue_router_id'
+            null,
+            'role_ids',
+            'vue_router_ids'
         );
     }
 

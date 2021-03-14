@@ -28,15 +28,17 @@ class AdminUser extends Authenticator
         'country', // 国家
         'created_by', // 创建人
         'updated_by', // 更新人
+        'role_ids',
+        'permission_ids',
     ];
 
     public function roles()
     {
         return $this->belongsToMany(
             AdminRole::class,
-            'admin_user_role',
-            'user_id',
-            'role_id'
+            null,
+            'user_ids',
+            'role_ids'
         );
     }
 
@@ -44,9 +46,9 @@ class AdminUser extends Authenticator
     {
         return $this->belongsToMany(
             AdminPermission::class,
-            'admin_user_permission',
-            'user_id',
-            'permission_id'
+            null,
+            'user_ids',
+            'permission_ids'
         );
     }
 
