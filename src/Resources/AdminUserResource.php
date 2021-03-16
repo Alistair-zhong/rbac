@@ -34,26 +34,26 @@ class AdminUserResource extends JsonResource
             $this->mergeFor(static::FOR_INFO, function () {
 
                 return [
-                    'roles' => Admin::isAdministrator() ? $this->roles()->pluck('slug') : $this->groupRole()->pluck('slug'),
+                    'roles' => $this->roles()->pluck('slug'),
                     'permissions' => $this->allPermissions()->pluck('slug')
                 ];
             }),
             $this->mergeFor(static::FOR_EDIT, function () {
                 $keyName = $this->getKeyName();
                 return [
-                    'roles' => Admin::isAdministrator() ? $this->roles()->pluck($keyName) : $this->groupRole()->pluck($keyName),
+                    'roles' => $this->roles()->pluck($keyName),
                     'permissions' => $this->permissions()->pluck($keyName),
                 ];
             }),
             $this->mergeFor(static::FOR_EDIT_INFO, function () {
                 return [
-                    'roles' => Admin::isAdministrator() ? $this->roles()->pluck('name') : $this->groupRole()->pluck('name'),
+                    'roles' => $this->roles()->pluck('name'),
                     'permissions' => $this->permissions()->pluck('name'),
                 ];
             }),
             $this->mergeFor(static::FOR_INDEX, function () {
                 return [
-                    'roles' => Admin::isAdministrator() ? $this->roles()->pluck('name') : $this->groupRole()->pluck('name'),
+                    'roles' => $this->roles()->pluck('name'),
                     'permissions' => $this->permissions->pluck('name'),
                 ];
             }),

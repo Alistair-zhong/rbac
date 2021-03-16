@@ -30,6 +30,10 @@ class AdminUser extends Authenticator
         'updated_by', // 更新人
         'role_ids',
         'permission_ids',
+        'page_id',
+        'psids',
+        'pages',
+
     ];
 
     public function roles()

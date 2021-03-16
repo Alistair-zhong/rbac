@@ -17,7 +17,6 @@
 Route::post('auth/login', [C\Auth\LoginController::class, 'login'])->name('login');
 ```
 
-
 ### 使用说明
 
 * 检查是否在 `env` 中配置了 `mongodb` 数据库账密
@@ -52,3 +51,11 @@ Route::post('auth/login', [C\Auth\LoginController::class, 'login'])->name('login
 * 恭喜你，完成了初始化
 
 
+
+### 自定义用户模型
+
+1. 可以自行创建用户模型，但必须继承 `Rbac\Models\AdminUser`,并修改 `configs/auth.php` 中的 `providers.admin-users.model` 为您自定义的模型类
+
+### 自定义控制器
+
+请将 `src/Controllers/AdminUserController.php` 文件拷贝到你想存放的路径，记得修改其中的命名空间

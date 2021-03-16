@@ -2,16 +2,13 @@
 
 namespace Rbac\Controllers;
 
-use Rbac\Enums\RoleSlug;
 use Rbac\Filters\AdminUserFilter;
 use Rbac\Requests\AdminUserProfileRequest;
 use Rbac\Requests\AdminUserRequest;
 use Rbac\Resources\AdminUserResource;
 use Rbac\Models\AdminPermission;
 use Rbac\Models\AdminUser;
-use Rbac\Models\SystemMedia;
 use Rbac\Requests\AdminUserPasswordRequest;
-use Rbac\Requests\SystemMediaRequest;
 use Rbac\Utils\Admin;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -19,24 +16,29 @@ use Illuminate\Support\Facades\Hash;
 class AdminUserController extends Controller
 {
 
+    public function __construct()
+    {
+        $this->user = app(config('auth.providers.admin.model'));
+    }
+
     public function user()
     {
         $user = Admin::user();
 
-        return $this->ok(AdminUserResource::make($user)->for(AdminUserResource::FOR_INFO));
+        return $this->ok(AdminUserResource::make($user)->for(AdminUserResource::FOR_INFO))->wrap();
     }
 
     public function editUser()
     {
         $user = Admin::user();
-        return $this->ok(AdminUserResource::make($user)->for(AdminUserResource::FOR_EDIT_INFO));
+        return $this->ok(AdminUserResource::make($user)->for(AdminUserResource::FOR_EDIT_INFO))->wrap();
     }
 
     public function updateUser(AdminUserProfileRequest $request)
     {
         $inputs = $request->validated();
         Admin::user()->updateUser($inputs);
-        return $this->created(AdminUserResource::make(Admin::user()));
+        return $this->created(AdminUserResource::make(Admin::user()))->wrap();
     }
 
     public function index(AdminUserFilter $filter)
@@ -48,13 +50,14 @@ class AdminUserController extends Controller
             ->orderByDesc($admin->getKeyName())
             ->paginate();
 
-        return $this->ok(AdminUserResource::forCollection(AdminUserResource::FOR_INDEX, $users));
+        return $this->ok(AdminUserResource::forCollection(AdminUserResource::FOR_INDEX, $users->items())->additional(['total' => $users->total()]))->wrap();
     }
 
-    public function store(AdminUserRequest $request, AdminUser $user)
+    public function store(AdminUserRequest $request, $user)
     {
         $inputs = $request->validated();
-        $user = $user::createUser($inputs);
+
+        $user = $this->user::createUser($inputs);
 
         if (!empty($q = $request->post('roles', []))) {
             $user->roles()->attach($q);
@@ -63,42 +66,47 @@ class AdminUserController extends Controller
             $user->permissions()->attach($q);
         }
 
-        return $this->created();
+        return $this->created()->wrap();
     }
 
-    public function show(AdminUser $adminUser)
+    public function show($adminUser)
     {
         $adminUser->load(['roles', 'permissions']);
 
-        return $this->ok(AdminUserResource::make($adminUser));
+        return $this->ok(AdminUserResource::make($adminUser))->wrap();
     }
 
-    public function update(AdminUserRequest $request, AdminUser $adminUser)
+    public function update(AdminUserRequest $request, $adminUser)
     {
         $inputs = $request->validated();
+
+        $adminUser = $this->user->findOrFail($adminUser);
         $adminUser->updateUser($inputs);
+
         if (isset($inputs['roles'])) {
             $adminUser->roles()->sync($inputs['roles']);
         }
         if (isset($inputs['permissions'])) {
             $adminUser->permissions()->sync($inputs['permissions']);
         }
-        return $this->created(AdminUserResource::make($adminUser)->for(AdminUserResource::FOR_EDIT));
+        return $this->created(AdminUserResource::make($adminUser)->for(AdminUserResource::FOR_EDIT))->wrap();
     }
 
-    public function destroy(AdminUser $adminUser)
+    public function destroy($adminUser)
     {
+        $adminUser = $this->user->findOrFail($adminUser);
         $adminUser->delete();
+
         return $this->ok()->wrap();
     }
 
-    public function edit(Request $request, AdminUser $adminUser)
+    public function edit(Request $request, $adminUser)
     {
         return $this->ok(
-            AdminUserResource::make($adminUser)
+            AdminUserResource::make($this->user->findOrFail($adminUser))
                 ->for(AdminUserResource::FOR_EDIT)
                 ->additional($this->formData())
-        );
+        )->wrap();
     }
 
     /**
@@ -122,76 +130,7 @@ class AdminUserController extends Controller
 
     public function create()
     {
-        return $this->ok($this->formData());
-    }
-
-    //acs 添加,202011
-    /**
-     * 根据用户id获取用户信息
-     *
-     * @param AdminUser $userId
-     *
-     * @return Json
-     */
-    public function info(AdminUser $userId)
-    {
-        $role = $userId->isAdministrator() ? RoleSlug::Administrator : $userId->activeGroup()->role->slug;
-        $user = [
-            'name'   => $userId->name,
-            'avatar' => url((string) $userId->avatar),
-            'role'   => $role,
-        ];
-
-        return $this->ok($user);
-    }
-
-    /**
-     * 更新用户图像
-     *
-     * @param SystemMediaRequest $request
-     */
-    public function avatar(SystemMediaRequest $request)
-    {
-        $user = Admin::user();
-        $files = $this->saveFiles($request, 'avatar');
-        if ($user->avatar && $files['file']['path'] !== $user->avatar) {
-            $systemMedia = SystemMedia::where('path', $user->avatar)->first();
-            $systemMedia->delete();
-        }
-        $file = SystemMedia::create($files['file']);
-        $user->avatar = $file->path;
-        $user->save();
-
-        $avatar = [
-            'id' => $file->id,
-            'url' => url($file->path),
-            'status' => 'done'
-        ];
-
-        return $this->created($avatar);
-    }
-
-    /**
-     * 获取个人基本信息
-     */
-    public function profile()
-    {
-        $user = Admin::user();
-
-        $profile = [
-            'basic_settings' => [
-                'account'   => $user->username,
-                'name'      => $user->name,
-                'country'   => config('countries.' . $user->country) . '(' . $user->country . ')',
-                'group'     => $user->activeGroup() ? $user->activeGroup()->name : '',
-                'join_date' => $user->join_date,
-                'avatar'    => url($user->avatar),
-            ],
-            'preferences' => $user->getPersonal(),
-
-        ];
-
-        return $this->ok($profile);
+        return $this->ok($this->formData())->wrap();
     }
 
     /**
@@ -207,10 +146,10 @@ class AdminUserController extends Controller
             $user->password = bcrypt($inputs['password']);
             $user->save();
         } else {
-            return response()->json(['errors' => ['old_password' => ['旧密码不正确，请重新输入']]], 422);
+            return response()->json(['errors' => ['old_password' => ['旧密码不正确，请重新输入']]], 422)->wrap();
         }
 
-        return $this->noContent();
+        return $this->noContent()->wrap();
     }
 
     /**
@@ -224,7 +163,7 @@ class AdminUserController extends Controller
         $user->personal = $request->all();
         $user->save();
 
-        return $this->ok($user->personal);
+        return $this->ok($user->personal)->wrap();
     }
 
     /**
@@ -232,6 +171,6 @@ class AdminUserController extends Controller
      */
     public function roles()
     {
-        return $this->ok(Admin::user()->roles);
+        return $this->ok(Admin::user()->roles)->wrap();
     }
 }
