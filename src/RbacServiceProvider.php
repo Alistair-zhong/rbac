@@ -137,7 +137,7 @@ class RbacServiceProvider extends ServiceProvider
             } elseif (is_array($this->original)) {
                 $original = (array)$this->original;
             } else {
-                $original = $this->original instanceof \Illuminate\Database\Eloquent\Model ? $this->original->toArray() : $this->original->resolve() ?? null;
+                $original = $this->original instanceof \Illuminate\Database\Eloquent\Model ? json_decode($this->data) : $this->original->resolve() ?? null;
             }
 
             $data = [
