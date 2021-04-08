@@ -4,10 +4,9 @@
  * 来自 laravel-admin
  */
 
-namespace Rbac\Utils;
+namespace App\Admin\Utils;
 
 use Illuminate\Support\Collection;
-use Rbac\Enums\RoleSlug;
 
 trait HasPermissions
 {
@@ -18,8 +17,9 @@ trait HasPermissions
      */
     public function allPermissions()
     {
-        $role = $this->isAdministrator() ? $this->roles() : $this->groupRole();
-        return $role->with('permissions')
+        return $this
+            ->roles()
+            ->with('permissions')
             ->get()
             ->pluck('permissions')
             ->flatten()
@@ -46,9 +46,7 @@ trait HasPermissions
             return true;
         }
 
-        $permissions = $this->isAdministrator() ? $this->roles->pluck('permissions') : $this->groupRole->permissions;
-
-        return $permissions->flatten()->pluck('slug')->contains($ability);
+        return $this->roles->pluck('permissions')->flatten()->pluck('slug')->contains($ability);
     }
 
     /**
@@ -71,7 +69,7 @@ trait HasPermissions
      */
     public function isAdministrator()
     {
-        return $this->isRole(RoleSlug::Administrator);
+        return $this->isRole('administrator');
     }
 
     /**
@@ -83,8 +81,7 @@ trait HasPermissions
      */
     public function isRole(string $role)
     {
-        $slug = $this->roles->count() ? $this->roles : $this->groupRole();
-        return $slug->pluck('slug')->contains($role);
+        return $this->roles->pluck('slug')->contains($role);
     }
 
     /**
@@ -96,8 +93,7 @@ trait HasPermissions
      */
     public function inRoles($roles = [])
     {
-        $slug = $this->roles->count() ? $this->roles : $this->groupRole();
-        return $slug->pluck('slug')->intersect($roles)->isNotEmpty();
+        return $this->roles->pluck('slug')->intersect($roles)->isNotEmpty();
     }
 
     /**
