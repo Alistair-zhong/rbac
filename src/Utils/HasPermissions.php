@@ -4,7 +4,7 @@
  * 来自 laravel-admin
  */
 
-namespace App\Admin\Utils;
+namespace Rbac\Utils;
 
 use Illuminate\Support\Collection;
 
