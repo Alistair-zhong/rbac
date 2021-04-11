@@ -76,7 +76,7 @@ class RbacServiceProvider extends ServiceProvider
     private function loadConfigs()
     {
         // $this->mergeConfigFrom(__DIR__ . '/../configs/auth.php', 'auth');
-        $this->mergeConfigFrom(__DIR__ . '/../configs/database.php', 'database');
+        // $this->mergeConfigFrom(__DIR__ . '/../configs/database.php', 'database');
     }
 
     /**
@@ -128,24 +128,35 @@ class RbacServiceProvider extends ServiceProvider
         JsonResponse::macro('wrap', function () {
             $original = [];
 
-            if (isset($this->original['data'])) {
-                $original['items'] = $this->original['data'];
-                unset($this->original['data']);
-                $original = array_merge($original, array_filter((array)$this->original));
-            } else if ($this->original instanceof \ArrayObject) {
-                // 解决空的情况
-            } elseif (is_array($this->original)) {
-                $original = (array)$this->original;
+            if ($this->statusCode >= 400) {
+                $data = [
+                    'code' => $this->statusCode,
+                    'message' => $this->original['message'],
+                    'result' => [],
+                    'type'  => 'error',
+                ];
             } else {
-                $original = $this->original instanceof \Illuminate\Database\Eloquent\Model ? json_decode($this->data) : $this->original->resolve() ?? null;
+
+                if (isset($this->original['data'])) {
+                    $original['items'] = $this->original['data'];
+                    unset($this->original['data']);
+                    $original = array_merge($original, array_filter((array)$this->original));
+                } else if ($this->original instanceof \ArrayObject) {
+                    // 解决空的情况
+                } elseif (is_array($this->original)) {
+                    $original = (array)$this->original;
+                } else {
+                    $original = $this->original instanceof \Illuminate\Database\Eloquent\Model ? json_decode($this->data) : $this->original->resolve() ?? null;
+                }
+
+                $data = [
+                    'code'    => 0,
+                    'result'  => $original,
+                    'message' => 'ok',
+                    'type'    => 'success'
+                ];
             }
 
-            $data = [
-                'code'    => 0,
-                'result'  => $original,
-                'message' => 'ok',
-                'type'    => 'success'
-            ];
             $this->setData($data);
 
             return $this;
