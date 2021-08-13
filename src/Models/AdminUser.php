@@ -7,6 +7,7 @@ use Rbac\Traits\ModelHelpers;
 use Rbac\Utils\HasPermissions;
 use Rbac\Models\AdminPermission;
 use Illuminate\Notifications\Notifiable;
+use Rbac\Enums\RoleSlug;
 
 class AdminUser extends Authenticator
 {
@@ -29,6 +30,7 @@ class AdminUser extends Authenticator
         'created_by', // 创建人
         'updated_by', // 更新人
         'role_ids',
+        'role_slugs',
         'permission_ids',
         'page_id',
         'psids',
@@ -92,5 +94,15 @@ class AdminUser extends Authenticator
         }
 
         return $this->update($inputs);
+    }
+
+    /**
+     * 此方法需要子类实现
+     *
+     * @return boolean
+     */
+    public function isSuperAdmin(): bool
+    {
+        return in_array(RoleSlug::SuperAdmin, $this->role_ids);
     }
 }

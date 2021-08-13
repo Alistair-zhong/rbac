@@ -6,7 +6,9 @@ use MyCLabs\Enum\Enum;
 
 class RoleSlug extends Enum
 {
-    const Administrator = 'administrator';
-    const Manager       = 'manager';
-    const Editor        = 'editor';
+    const SuperAdmin    = 'super_admin';
+    const Leader        = 'leader';
+    const Administrator = 'admin';
+    const User          = 'user';
+    const Agent         = 'livechat_agent';
 }

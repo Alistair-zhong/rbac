@@ -2,6 +2,7 @@
 
 namespace Rbac\Utils;
 
+use Rbac\Enums\RoleSlug;
 use Illuminate\Support\Str;
 
 class Admin
@@ -18,6 +19,17 @@ class Admin
 
     /**
      * 当前登录管理员是不是超级管理员
+     *
+     * @return boolean
+     */
+    public static function isSuperAdmin(): bool
+    {
+        $user = static::user();
+        return $user && $user->isSuperAdmin();
+    }
+
+    /**
+     * 当前登录管理员是不是管理员
      *
      * @return bool
      */

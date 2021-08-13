@@ -2,12 +2,14 @@
 
 namespace Rbac\Controllers;
 
+use Rbac\Utils\Admin;
+use Rbac\Enums\RoleSlug;
+use Rbac\Models\AdminRole;
+use Illuminate\Http\Request;
+use Rbac\Models\AdminPermission;
 use Rbac\Filters\AdminRoleFilter;
 use Rbac\Requests\AdminRoleRequest;
 use Rbac\Resources\AdminRoleResource;
-use Rbac\Models\AdminPermission;
-use Rbac\Models\AdminRole;
-use Illuminate\Http\Request;
 
 class AdminRoleController extends Controller
 {
@@ -56,8 +58,12 @@ class AdminRoleController extends Controller
 
     public function index(Request $request, AdminRoleFilter $filter)
     {
+        // todo 排除超级管理员， 如果当前角色是非超级管理，还需排除组长角色
         $model = new AdminRole;
+        $except_roles = Admin::isSuperAdmin() ? [RoleSlug::SuperAdmin] : [RoleSlug::SuperAdmin, RoleSlug::Leader];
+
         $roles = $model->query()
+            ->whereNotIn('role_slugs', $except_roles)
             ->with(['permissions'])
             ->filter($filter)
             ->orderByDesc($model->getKeyName());
