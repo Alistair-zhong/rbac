@@ -58,12 +58,9 @@ class AdminRoleController extends Controller
 
     public function index(Request $request, AdminRoleFilter $filter)
     {
-        // todo 排除超级管理员， 如果当前角色是非超级管理，还需排除组长角色
         $model = new AdminRole;
-        $except_roles = Admin::isSuperAdmin() ? [RoleSlug::SuperAdmin] : [RoleSlug::SuperAdmin, RoleSlug::Leader];
 
         $roles = $model->query()
-            ->whereNotIn('slug', $except_roles)
             ->with(['permissions'])
             ->filter($filter)
             ->orderByDesc($model->getKeyName());
