@@ -63,7 +63,7 @@ class AdminRoleController extends Controller
         $except_roles = Admin::isSuperAdmin() ? [RoleSlug::SuperAdmin] : [RoleSlug::SuperAdmin, RoleSlug::Leader];
 
         $roles = $model->query()
-            ->whereNotIn('role_slugs', $except_roles)
+            ->whereNotIn('slug', $except_roles)
             ->with(['permissions'])
             ->filter($filter)
             ->orderByDesc($model->getKeyName());
