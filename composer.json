@@ -3,7 +3,8 @@
     "description": "rbac for backend ,database for mongo",
     "type": "library",
     "require": {
-        "jenssegers/mongodb": "^3.5",
+        "php": "^8.1",
+        "mongodb/laravel-mongodb": "^4.9|^5.8",
         "myclabs/php-enum": "^1.8"
     },
     "license": "MIT",

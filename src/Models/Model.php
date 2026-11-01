@@ -5,7 +5,7 @@ namespace Rbac\Models;
 use Rbac\Traits\ModelHelpers;
 use DateTimeInterface;
 
-class Model extends \Jenssegers\Mongodb\Eloquent\Model
+class Model extends \MongoDB\Laravel\Eloquent\Model
 {
     use ModelHelpers;
 
@@ -15,7 +15,10 @@ class Model extends \Jenssegers\Mongodb\Eloquent\Model
 
     // public $incrementing = false;
 
-    protected $dates = ['created_at', 'updated_at'];
+    protected $casts = [
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+    ];
 
     protected function serializeDate(DateTimeInterface $date)
     {
